@@ -4,6 +4,8 @@
              xmlns:local="clr-namespace:BricksAndPieces"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
         <Style TargetType="Button">
             <Setter Property="Padding" Value="10,0" />
             <Setter Property="Margin" Value="0,0,7,7" />

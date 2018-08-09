@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BricksAndPieces"
         mc:Ignorable="d"
-        Title="Bricks and Pieces" MinHeight="200" MinWidth="600" Width="800" Height="600">
+        Title="Bricks and Pieces" MinHeight="200" MinWidth="600" Width="1000" Height="600">
     <Grid Margin="11,11,4,4">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -21,13 +21,6 @@
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
-                        <GridViewColumn Width="40">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Style="{StaticResource FlatButton}" Foreground="DarkRed" Content="" FontFamily="Segoe UI Symbol" Command="{Binding DataContext.RemoveSpecificElementCommand, ElementName=mainWindow}" CommandParameter="{Binding}" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
                         <GridViewColumn Width="40">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -62,11 +55,43 @@
 
                                                     <Button Style="{StaticResource FlatButton}" Content="{Binding DesignId}" Command="{Binding DataContext.AddSpecificElementCommand, ElementName=mainWindow}" CommandParameter="{Binding DesignId}" />
                                                     <TextBlock Grid.Column="1" Text="{Binding Color}" />
-                                                    <TextBlock Grid.Column="2" Text="{Binding Quantity}" />
+                                                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                                        <TextBlock Text="{Binding Quantity}">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Foreground" Value="Black" />
+                                                                    <Setter Property="FontWeight" Value="Normal" />
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding HasIncreased}" Value="True">
+                                                                            <DataTrigger.Setters>
+                                                                                <Setter Property="Foreground" Value="DarkGreen" />
+                                                                                <Setter Property="FontWeight" Value="Bold" />
+                                                                            </DataTrigger.Setters>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding HasDecreased}" Value="True">
+                                                                            <DataTrigger.Setters>
+                                                                                <Setter Property="Foreground" Value="DarkRed" />
+                                                                                <Setter Property="FontWeight" Value="Bold" />
+                                                                            </DataTrigger.Setters>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                        <TextBlock Text="⭜" Visibility="{Binding HasIncreased, Converter={StaticResource BoolToVisibility}}" Foreground="DarkGreen" FontWeight="Bold" />
+                                                        <TextBlock Text="⭝" Visibility="{Binding HasDecreased, Converter={StaticResource BoolToVisibility}}" Foreground="DarkRed" FontWeight="Bold" />
+                                                    </StackPanel>
                                                 </Grid>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Width="40">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource FlatButton}" Foreground="DarkRed" Content="" FontFamily="Segoe UI Symbol" Command="{Binding DataContext.RemoveSpecificElementCommand, ElementName=mainWindow}" CommandParameter="{Binding}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

@@ -111,6 +111,9 @@ namespace BricksAndPieces
         {
             foreach (var element in Elements)
             {
+                if (string.IsNullOrWhiteSpace(element.ElementId))
+                    continue;
+
                 try
                 {
                     var result = await client.GetStringAsync($"https://www.lego.com/sv-SE/service/rpservice/getitemordesign?itemordesignnumber={element.ElementId}&isSalesFlow=true");
@@ -118,13 +121,32 @@ namespace BricksAndPieces
 
                     if (product.Bricks.Count > 0)
                         element.Description = product.Bricks[0].ItemDescr;
-                    element.Bricks.Clear();
-                    foreach (var brick in product.Bricks)
+
+                    var removedBricks = element.Bricks.Where(b => !product.Bricks.Any(pb => pb.ItemNo == b.DesignId)).ToList();
+                    foreach (var brick in removedBricks)
                     {
-                        element.Bricks.Add(new Brick { DesignId = brick.ItemNo.ToString(), Color = brick.ColourDescr, Quantity = brick.SQty, Asset = brick.Asset });
+                        element.Bricks.Remove(brick);
                     }
 
-                    element.Image = new BitmapImage(new Uri(product.ImageBaseUrl + element.Bricks[0].Asset));
+                    foreach (var brickJson in product.Bricks)
+                    {
+                        var brick = element.Bricks.SingleOrDefault(b => b.DesignId == brickJson.ItemNo);
+                        if (brick == null)
+                        {
+                            element.Bricks.Add(new Brick { DesignId = brickJson.ItemNo, Color = brickJson.ColourDescr, Quantity = brickJson.SQty });
+
+                            if (element.Image == null)
+                                element.Image = new BitmapImage(new Uri(product.ImageBaseUrl + brickJson.Asset));
+                        }
+                        else
+                        {
+                            brick.HasIncreased = (brickJson.SQty > brick.Quantity);
+                            brick.HasDecreased = (brickJson.SQty < brick.Quantity);
+                            brick.Quantity = brickJson.SQty;
+                        }
+                    }
+
+                    
                 }
                 catch (Exception)
                 {
@@ -145,10 +167,11 @@ namespace BricksAndPieces
 
     public class Brick : ViewModelKit.ViewModelBase
     {
-        public string DesignId { get; set; }
+        public int DesignId { get; set; }
         public string Color { get; set; }
         public double Quantity { get; set; }
-        public string Asset { get; set; }
+        public bool HasIncreased { get; set; }
+        public bool HasDecreased { get; set; }
     }
 
     public class ResultJson
