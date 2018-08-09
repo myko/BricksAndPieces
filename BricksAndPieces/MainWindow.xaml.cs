@@ -19,6 +19,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net;
 using Newtonsoft.Json;
+using ViewModelKit;
 
 namespace BricksAndPieces
 {
@@ -27,15 +28,44 @@ namespace BricksAndPieces
     /// </summary>
     public partial class MainWindow : Window
     {
-        private HttpClientHandler handler;
-        private HttpClient client;
-
-        public ObservableCollection<Element> Elements { get; set; }
+        private MainWindowViewModel vm;
 
         public MainWindow()
         {
             InitializeComponent();
 
+            vm = new MainWindowViewModel();
+
+            DataContext = vm;
+        }
+        
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            Properties.Settings.Default.Elements.Clear();
+            foreach (var element in vm.Elements)
+            {
+                Properties.Settings.Default.Elements.Add(element.ElementId);
+            }
+            Properties.Settings.Default.Save();
+
+            base.OnClosing(e);
+        }
+    }
+
+    public class MainWindowViewModel: ViewModelKit.ViewModelBase
+    {
+        private HttpClientHandler handler;
+        private HttpClient client;
+
+        public ObservableCollection<Element> Elements { get; set; }
+
+        public DelegateCommand RefreshCommand { get; }
+        public DelegateCommand AddElementCommand { get; }
+        public DelegateCommand RemoveElementCommand { get; }
+        public DelegateCommand AddSpecificElementCommand { get; }
+
+        public MainWindowViewModel()
+        {
             Elements = new ObservableCollection<Element>();
             foreach (var elementId in Properties.Settings.Default.Elements)
             {
@@ -45,11 +75,35 @@ namespace BricksAndPieces
             handler = new HttpClientHandler() { UseCookies = false };
             client = new HttpClient(handler);
             client.DefaultRequestHeaders.Add("cookie", "csAgeAndCountry={\"age\":\"22\",\"countrycode\":\"SE\"}");
-
-            DataContext = this;
         }
 
-        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+        public void OnRefresh()
+        {
+            Refresh();
+        }
+
+        public void OnAddElement()
+        {
+            Elements.Add(new Element());
+        }
+
+        public void OnRemoveElement()
+        {
+            var cvs = CollectionViewSource.GetDefaultView(Elements);
+            Elements.RemoveAt(cvs.CurrentPosition);
+        }
+
+        public void OnRemoveElement(object element)
+        {
+            Elements.Remove(element as Element);
+        }
+
+        public void OnAddSpecificElement(object elementId)
+        {
+            Elements.Add(new Element() { ElementId = elementId as string });
+        }
+
+        private async Task Refresh()
         {
             foreach (var element in Elements)
             {
@@ -72,105 +126,21 @@ namespace BricksAndPieces
                 }
             }
         }
-
-        private void AddElementButton_Click(object sender, RoutedEventArgs e)
-        {
-            Elements.Add(new Element());
-        }
-
-        private void RemoveElementButton_Click(object sender, RoutedEventArgs e)
-        {
-            var cvs = CollectionViewSource.GetDefaultView(Elements);
-            Elements.RemoveAt(cvs.CurrentPosition);
-        }
-
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            Properties.Settings.Default.Elements.Clear();
-            foreach (var element in Elements)
-            {
-                Properties.Settings.Default.Elements.Add(element.ElementId);
-            }
-            Properties.Settings.Default.Save();
-
-            base.OnClosing(e);
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Elements.Add(new Element() { ElementId = (sender as Button).Content as string });
-        }
     }
 
-    public class Element : INotifyPropertyChanged
+    public class Element : ViewModelKit.ViewModelBase
     {
-        private string description;
-
         public string ElementId { get; set; }
         public ObservableCollection<Brick> Bricks { get; set; } = new ObservableCollection<Brick>();
 
-        public string Description
-        {
-            get { return description; }
-            set
-            {
-                description = value;
-                OnPropertyChanged("Description");
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
+        public string Description { get; set; }
     }
 
-    public class Brick : INotifyPropertyChanged
+    public class Brick : ViewModelKit.ViewModelBase
     {
-        private string designId;
-        private string color;
-        private double quantity;
-        
-        public string DesignId
-        {
-            get { return designId; }
-            set
-            {
-                designId = value;
-                OnPropertyChanged("DesignId");
-            }
-        }
-
-        public string Color
-        {
-            get { return color; }
-            set
-            {
-                color = value;
-                OnPropertyChanged("Color");
-            }
-        }
-
-        public double Quantity
-        {
-            get { return quantity; }
-            set
-            {
-                quantity = value;
-                OnPropertyChanged("Quantity");
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
+        public string DesignId { get; set; }
+        public string Color { get; set; }
+        public double Quantity { get; set; }
     }
 
     public class ResultJson

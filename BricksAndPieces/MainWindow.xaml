@@ -1,4 +1,5 @@
 ﻿<Window x:Class="BricksAndPieces.MainWindow"
+        x:Name="mainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -20,7 +21,14 @@
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
-                        <GridViewColumn Header="Element ID" Width="100">
+                        <GridViewColumn Width="40">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource FlatButton}" Content="" FontFamily="Segoe UI Symbol" Command="{Binding DataContext.RemoveElementCommand, ElementName=mainWindow}" CommandParameter="{Binding}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Element ID/Design ID" Width="130">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox Text="{Binding ElementId}" />
@@ -41,13 +49,7 @@
                                                         <ColumnDefinition />
                                                     </Grid.ColumnDefinitions>
 
-                                                    <Button Content="{Binding DesignId}" Margin="0" Cursor="Hand" Click="Button_Click">
-                                                        <Button.Template>
-                                                            <ControlTemplate TargetType="Button">
-                                                                <TextBlock Text="{TemplateBinding Content}" />
-                                                            </ControlTemplate>
-                                                        </Button.Template>
-                                                    </Button>
+                                                    <Button Style="{StaticResource FlatButton}" Content="{Binding DesignId}" Command="{Binding DataContext.AddSpecificElementCommand, ElementName=mainWindow}" CommandParameter="{Binding DesignId}" />
                                                     <TextBlock Grid.Column="1" Text="{Binding Color}" />
                                                     <TextBlock Grid.Column="2" Text="{Binding Quantity}" />
                                                 </Grid>
@@ -61,10 +63,10 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button x:Name="RefresButton" Grid.Column="1" Content="Refresh" Click="RefreshButton_Click" />
+        <Button x:Name="RefreshButton" Grid.Column="1" Content="Refresh" Command="{Binding RefreshCommand}" />
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button x:Name="AddElementButton" Content="Add element" Click="AddElementButton_Click" />
-            <Button x:Name="RemoveElementButton" Content="Remove element" Click="RemoveElementButton_Click" />
+            <Button x:Name="AddElementButton" Content="Add element" Command="{Binding AddElementCommand}" />
+            <Button x:Name="RemoveElementButton" Content="Remove element" Command="{Binding RemoveElementCommand}" />
         </StackPanel>
     </Grid>
 </Window>
