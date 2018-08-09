@@ -24,7 +24,18 @@
                         <GridViewColumn Width="40">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Style="{StaticResource FlatButton}" Content="" FontFamily="Segoe UI Symbol" Command="{Binding DataContext.RemoveElementCommand, ElementName=mainWindow}" CommandParameter="{Binding}" />
+                                    <Button Style="{StaticResource FlatButton}" Foreground="DarkRed" Content="" FontFamily="Segoe UI Symbol" Command="{Binding DataContext.RemoveSpecificElementCommand, ElementName=mainWindow}" CommandParameter="{Binding}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Width="40">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding Image}" Width="21" Height="21">
+                                        <Image.ToolTip>
+                                            <Image Source="{Binding Image}" />
+                                        </Image.ToolTip>
+                                    </Image>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

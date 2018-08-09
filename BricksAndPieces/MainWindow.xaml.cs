@@ -56,12 +56,14 @@ namespace BricksAndPieces
     {
         private HttpClientHandler handler;
         private HttpClient client;
+        private WebClient webClient;
 
         public ObservableCollection<Element> Elements { get; set; }
 
         public DelegateCommand RefreshCommand { get; }
         public DelegateCommand AddElementCommand { get; }
         public DelegateCommand RemoveElementCommand { get; }
+        public DelegateCommand RemoveSpecificElementCommand { get; }
         public DelegateCommand AddSpecificElementCommand { get; }
 
         public MainWindowViewModel()
@@ -75,6 +77,8 @@ namespace BricksAndPieces
             handler = new HttpClientHandler() { UseCookies = false };
             client = new HttpClient(handler);
             client.DefaultRequestHeaders.Add("cookie", "csAgeAndCountry={\"age\":\"22\",\"countrycode\":\"SE\"}");
+
+            webClient = new WebClient();
         }
 
         public void OnRefresh()
@@ -93,7 +97,7 @@ namespace BricksAndPieces
             Elements.RemoveAt(cvs.CurrentPosition);
         }
 
-        public void OnRemoveElement(object element)
+        public void OnRemoveSpecificElement(object element)
         {
             Elements.Remove(element as Element);
         }
@@ -117,8 +121,10 @@ namespace BricksAndPieces
                     element.Bricks.Clear();
                     foreach (var brick in product.Bricks)
                     {
-                        element.Bricks.Add(new Brick { DesignId = brick.ItemNo.ToString(), Color = brick.ColourDescr, Quantity = brick.SQty });
+                        element.Bricks.Add(new Brick { DesignId = brick.ItemNo.ToString(), Color = brick.ColourDescr, Quantity = brick.SQty, Asset = brick.Asset });
                     }
+
+                    element.Image = new BitmapImage(new Uri(product.ImageBaseUrl + element.Bricks[0].Asset));
                 }
                 catch (Exception)
                 {
@@ -134,6 +140,7 @@ namespace BricksAndPieces
         public ObservableCollection<Brick> Bricks { get; set; } = new ObservableCollection<Brick>();
 
         public string Description { get; set; }
+        public BitmapImage Image { get; set; }
     }
 
     public class Brick : ViewModelKit.ViewModelBase
@@ -141,11 +148,13 @@ namespace BricksAndPieces
         public string DesignId { get; set; }
         public string Color { get; set; }
         public double Quantity { get; set; }
+        public string Asset { get; set; }
     }
 
     public class ResultJson
     {
         public List<BrickJson> Bricks { get; set; } = new List<BrickJson>();
+        public string ImageBaseUrl { get; set; }
     }
 
     public class BrickJson
@@ -154,5 +163,6 @@ namespace BricksAndPieces
         public string ItemDescr { get; set; }
         public double SQty { get; set; }
         public string ColourDescr { get; set; }
+        public string Asset { get; set; }
     }
 }
