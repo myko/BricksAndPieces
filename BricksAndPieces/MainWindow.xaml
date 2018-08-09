@@ -5,8 +5,66 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BricksAndPieces"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
+        Title="Bricks and Pieces" MinHeight="200" MinWidth="600" Width="800" Height="600">
+    <Grid Margin="11,11,4,4">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ListView Margin="0,0,7,7" ItemsSource="{Binding Elements}" IsSynchronizedWithCurrentItem="True" ScrollViewer.CanContentScroll="True" VirtualizingPanel.ScrollUnit="Pixel">
+            <ListView.View>
+                <GridView>
+                    <GridView.Columns>
+                        <GridViewColumn Header="Element ID" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding ElementId}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Description" Width="200" DisplayMemberBinding="{Binding Description}" />
+                        <GridViewColumn Header="Bricks" Width="400">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ItemsControl ItemsSource="{Binding Bricks}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="100" />
+                                                        <ColumnDefinition Width="150" />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Button Content="{Binding DesignId}" Margin="0" Cursor="Hand" Click="Button_Click">
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <TextBlock Text="{TemplateBinding Content}" />
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                    </Button>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Color}" />
+                                                    <TextBlock Grid.Column="2" Text="{Binding Quantity}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView.Columns>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Button x:Name="RefresButton" Grid.Column="1" Content="Refresh" Click="RefreshButton_Click" />
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button x:Name="AddElementButton" Content="Add element" Click="AddElementButton_Click" />
+            <Button x:Name="RemoveElementButton" Content="Remove element" Click="RemoveElementButton_Click" />
+        </StackPanel>
     </Grid>
 </Window>
