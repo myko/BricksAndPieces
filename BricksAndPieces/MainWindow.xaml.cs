@@ -104,7 +104,7 @@ namespace BricksAndPieces
 
         public void OnAddSpecificElement(object elementId)
         {
-            Elements.Add(new Element() { ElementId = elementId as string });
+            Elements.Add(new Element() { ElementId = elementId.ToString() });
         }
 
         private async Task Refresh()
