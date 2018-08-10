@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -133,16 +132,21 @@ namespace BricksAndPieces
                         var brick = element.Bricks.SingleOrDefault(b => b.DesignId == brickJson.ItemNo);
                         if (brick == null)
                         {
-                            element.Bricks.Add(new Brick { DesignId = brickJson.ItemNo, Color = brickJson.ColourDescr, Quantity = brickJson.SQty });
+                            element.Bricks.Add(new Brick
+                            {
+                                DesignId = brickJson.ItemNo,
+                                Color = brickJson.ColourDescr,
+                                Quantity = new ChangingValue(brickJson.SQty),
+                                Price = new ChangingValue(brickJson.Price)
+                            });
 
                             if (element.Image == null)
                                 element.Image = new BitmapImage(new Uri(product.ImageBaseUrl + brickJson.Asset));
                         }
                         else
                         {
-                            brick.HasIncreased = (brickJson.SQty > brick.Quantity);
-                            brick.HasDecreased = (brickJson.SQty < brick.Quantity);
-                            brick.Quantity = brickJson.SQty;
+                            brick.Quantity.Change(brickJson.SQty);
+                            brick.Price.Change(brickJson.Price);
                         }
                     }
 
@@ -154,38 +158,5 @@ namespace BricksAndPieces
                 }
             }
         }
-    }
-
-    public class Element : ViewModelKit.ViewModelBase
-    {
-        public string ElementId { get; set; }
-        public ObservableCollection<Brick> Bricks { get; set; } = new ObservableCollection<Brick>();
-
-        public string Description { get; set; }
-        public BitmapImage Image { get; set; }
-    }
-
-    public class Brick : ViewModelKit.ViewModelBase
-    {
-        public int DesignId { get; set; }
-        public string Color { get; set; }
-        public double Quantity { get; set; }
-        public bool HasIncreased { get; set; }
-        public bool HasDecreased { get; set; }
-    }
-
-    public class ResultJson
-    {
-        public List<BrickJson> Bricks { get; set; } = new List<BrickJson>();
-        public string ImageBaseUrl { get; set; }
-    }
-
-    public class BrickJson
-    {
-        public int ItemNo { get; set; }
-        public string ItemDescr { get; set; }
-        public double SQty { get; set; }
-        public string ColourDescr { get; set; }
-        public string Asset { get; set; }
     }
 }

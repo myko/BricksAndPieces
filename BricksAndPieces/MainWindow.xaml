@@ -50,37 +50,14 @@
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="100" />
                                                         <ColumnDefinition Width="150" />
+                                                        <ColumnDefinition Width="100" />
                                                         <ColumnDefinition />
                                                     </Grid.ColumnDefinitions>
 
                                                     <Button Style="{StaticResource FlatButton}" Content="{Binding DesignId}" Command="{Binding DataContext.AddSpecificElementCommand, ElementName=mainWindow}" CommandParameter="{Binding DesignId}" />
                                                     <TextBlock Grid.Column="1" Text="{Binding Color}" />
-                                                    <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                                        <TextBlock Text="{Binding Quantity}">
-                                                            <TextBlock.Style>
-                                                                <Style TargetType="TextBlock">
-                                                                    <Setter Property="Foreground" Value="Black" />
-                                                                    <Setter Property="FontWeight" Value="Normal" />
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding HasIncreased}" Value="True">
-                                                                            <DataTrigger.Setters>
-                                                                                <Setter Property="Foreground" Value="DarkGreen" />
-                                                                                <Setter Property="FontWeight" Value="Bold" />
-                                                                            </DataTrigger.Setters>
-                                                                        </DataTrigger>
-                                                                        <DataTrigger Binding="{Binding HasDecreased}" Value="True">
-                                                                            <DataTrigger.Setters>
-                                                                                <Setter Property="Foreground" Value="DarkRed" />
-                                                                                <Setter Property="FontWeight" Value="Bold" />
-                                                                            </DataTrigger.Setters>
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </TextBlock.Style>
-                                                        </TextBlock>
-                                                        <TextBlock Text="⭜" Visibility="{Binding HasIncreased, Converter={StaticResource BoolToVisibility}}" Foreground="DarkGreen" FontWeight="Bold" />
-                                                        <TextBlock Text="⭝" Visibility="{Binding HasDecreased, Converter={StaticResource BoolToVisibility}}" Foreground="DarkRed" FontWeight="Bold" />
-                                                    </StackPanel>
+                                                    <ContentControl Grid.Column="2" Content="{Binding Quantity}" />
+                                                    <ContentControl Grid.Column="3" Content="{Binding Price}" />
                                                 </Grid>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
