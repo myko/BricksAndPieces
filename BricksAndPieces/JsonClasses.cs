@@ -4,10 +4,17 @@ namespace BricksAndPieces
 {
     public class ResultJson
     {
+        public ProductJson Product { get; set; }
         public List<BrickJson> Bricks { get; set; } = new List<BrickJson>();
         public string ImageBaseUrl { get; set; }
     }
     
+    public class ProductJson
+    {
+        public string ProductName { get; set; }
+        public string Asset { get; set; }
+    }
+
     public class BrickJson
     {
         public int ItemNo { get; set; }

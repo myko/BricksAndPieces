@@ -7,79 +7,139 @@
         xmlns:local="clr-namespace:BricksAndPieces"
         mc:Ignorable="d"
         Title="Bricks and Pieces" MinHeight="200" MinWidth="600" Width="1000" Height="600">
-    <Grid Margin="11,11,4,4">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <TabControl Margin="11,11,4,4">
+        <TabItem Header="Wanted list">
+            <Grid Margin="7,7,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-        <ListView Margin="0,0,7,7" ItemsSource="{Binding Elements}" IsSynchronizedWithCurrentItem="True" ScrollViewer.CanContentScroll="True" VirtualizingPanel.ScrollUnit="Pixel">
-            <ListView.View>
-                <GridView>
-                    <GridView.Columns>
-                        <GridViewColumn Width="40">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Image Source="{Binding Image}" Width="21" Height="21">
-                                        <Image.ToolTip>
-                                            <Image Source="{Binding Image}" />
-                                        </Image.ToolTip>
-                                    </Image>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Header="Element ID/Design ID" Width="130">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBox Text="{Binding ElementId}" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Header="Description" Width="200" DisplayMemberBinding="{Binding Description}" />
-                        <GridViewColumn Header="Bricks" Width="400">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <ItemsControl ItemsSource="{Binding Bricks}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="100" />
-                                                        <ColumnDefinition Width="150" />
-                                                        <ColumnDefinition Width="100" />
-                                                        <ColumnDefinition />
-                                                    </Grid.ColumnDefinitions>
+                <ListView Margin="0,0,7,7" ItemsSource="{Binding Elements}" IsSynchronizedWithCurrentItem="True" ScrollViewer.CanContentScroll="True" VirtualizingPanel.ScrollUnit="Pixel">
+                    <ListView.View>
+                        <GridView>
+                            <GridView.Columns>
+                                <GridViewColumn Width="40">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding Image}" Width="21" Height="21">
+                                                <Image.ToolTip>
+                                                    <Image Source="{Binding Image}" />
+                                                </Image.ToolTip>
+                                            </Image>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Element ID/Design ID" Width="130">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding ElementId}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Description" Width="200" DisplayMemberBinding="{Binding Description}" />
+                                <GridViewColumn Header="Bricks" Width="400">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <ItemsControl ItemsSource="{Binding Bricks}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="100" />
+                                                                <ColumnDefinition Width="150" />
+                                                                <ColumnDefinition Width="100" />
+                                                                <ColumnDefinition />
+                                                            </Grid.ColumnDefinitions>
 
-                                                    <Button Style="{StaticResource FlatButton}" Content="{Binding DesignId}" Command="{Binding DataContext.AddSpecificElementCommand, ElementName=mainWindow}" CommandParameter="{Binding DesignId}" />
-                                                    <TextBlock Grid.Column="1" Text="{Binding Color}" />
-                                                    <ContentControl Grid.Column="2" Content="{Binding Quantity}" />
-                                                    <ContentControl Grid.Column="3" Content="{Binding Price}" />
-                                                </Grid>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Width="40">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Style="{StaticResource FlatButton}" Foreground="DarkRed" Content="" FontFamily="Segoe UI Symbol" Command="{Binding DataContext.RemoveSpecificElementCommand, ElementName=mainWindow}" CommandParameter="{Binding}" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView.Columns>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <Button x:Name="RefreshButton" Grid.Column="1" Content="Refresh" Command="{Binding RefreshCommand}" />
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button x:Name="AddElementButton" Content="Add element" Command="{Binding AddElementCommand}" />
-            <Button x:Name="RemoveElementButton" Content="Remove element" Command="{Binding RemoveElementCommand}" />
-        </StackPanel>
-    </Grid>
+                                                            <Button Style="{StaticResource FlatButton}" Content="{Binding DesignId}" Command="{Binding DataContext.AddSpecificElementCommand, ElementName=mainWindow}" CommandParameter="{Binding DesignId}" />
+                                                            <TextBlock Grid.Column="1" Text="{Binding Color}" />
+                                                            <ContentControl Grid.Column="2" Content="{Binding Quantity}" />
+                                                            <ContentControl Grid.Column="3" Content="{Binding Price}" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="40">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Style="{StaticResource FlatButton}" Foreground="DarkRed" Content="" FontFamily="Segoe UI Symbol" Command="{Binding DataContext.RemoveSpecificElementCommand, ElementName=mainWindow}" CommandParameter="{Binding}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView.Columns>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <Button Grid.Column="1" Content="Refresh" Command="{Binding RefreshCommand}" />
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Button Content="Add element" Command="{Binding AddElementCommand}" />
+                    <Button Content="Remove element" Command="{Binding RemoveElementCommand}" />
+                </StackPanel>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Find set">
+            <Grid Margin="7,7,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="21" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <TextBox Text="{Binding ProductId}" />
+                <Button Grid.Column="1" Content="Find set" Command="{Binding FindProductCommand}" />
+                <Image Grid.Column="2" Source="{Binding Product.Image}" Width="21" Height="21">
+                    <Image.ToolTip>
+                        <Image Source="{Binding Product.Image}" />
+                    </Image.ToolTip>
+                </Image>
+                <Label Grid.Column="3" Content="{Binding Product.Description}" />
+
+                <ListView Grid.Row="1" Grid.ColumnSpan="5" Margin="0,0,7,7" ItemsSource="{Binding Product.Bricks}" ScrollViewer.CanContentScroll="True" VirtualizingPanel.ScrollUnit="Pixel">
+                    <ListView.View>
+                        <GridView>
+                            <GridView.Columns>
+                                <GridViewColumn Width="40">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding Image}" Width="21" Height="21">
+                                                <Image.ToolTip>
+                                                    <Image Source="{Binding Image}" />
+                                                </Image.ToolTip>
+                                            </Image>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Element ID" Width="130" DisplayMemberBinding="{Binding DesignId}" />
+                                <GridViewColumn Header="Description" Width="200" DisplayMemberBinding="{Binding Description}" />
+                                <GridViewColumn Header="Color" Width="150" DisplayMemberBinding="{Binding Color}" />
+                                <GridViewColumn Header="Quantity" Width="100" DisplayMemberBinding="{Binding Quantity.Value}" />
+                                <GridViewColumn Header="Price" Width="100" DisplayMemberBinding="{Binding Price.Value}" />
+                                <GridViewColumn Width="40">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Style="{StaticResource FlatButton}" Content="" Foreground="CornflowerBlue" FontFamily="Segoe UI Symbol" Command="{Binding DataContext.AddSpecificElementCommand, ElementName=mainWindow}" CommandParameter="{Binding DesignId}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView.Columns>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+        </TabItem>
+    </TabControl>
 </Window>

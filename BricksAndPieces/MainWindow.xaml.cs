@@ -55,15 +55,19 @@ namespace BricksAndPieces
     {
         private HttpClientHandler handler;
         private HttpClient client;
-        private WebClient webClient;
 
         public ObservableCollection<Element> Elements { get; set; }
+
+        public string ProductId { get; set; }
+        public Element Product { get; set; }
 
         public DelegateCommand RefreshCommand { get; }
         public DelegateCommand AddElementCommand { get; }
         public DelegateCommand RemoveElementCommand { get; }
         public DelegateCommand RemoveSpecificElementCommand { get; }
         public DelegateCommand AddSpecificElementCommand { get; }
+
+        public DelegateCommand FindProductCommand { get; }
 
         public MainWindowViewModel()
         {
@@ -76,8 +80,6 @@ namespace BricksAndPieces
             handler = new HttpClientHandler() { UseCookies = false };
             client = new HttpClient(handler);
             client.DefaultRequestHeaders.Add("cookie", "csAgeAndCountry={\"age\":\"22\",\"countrycode\":\"SE\"}");
-
-            webClient = new WebClient();
         }
 
         public void OnRefresh()
@@ -106,6 +108,11 @@ namespace BricksAndPieces
             Elements.Add(new Element() { ElementId = elementId.ToString() });
         }
 
+        public void OnFindProduct()
+        {
+            FindProduct(ProductId);
+        }
+
         private async Task Refresh()
         {
             foreach (var element in Elements)
@@ -117,6 +124,8 @@ namespace BricksAndPieces
                 {
                     var result = await client.GetStringAsync($"https://www.lego.com/sv-SE/service/rpservice/getitemordesign?itemordesignnumber={element.ElementId}&isSalesFlow=true");
                     var product = JsonConvert.DeserializeObject<ResultJson>(result);
+
+                    element.Image = null;
 
                     if (product.Bricks.Count > 0)
                         element.Description = product.Bricks[0].ItemDescr;
@@ -156,6 +165,43 @@ namespace BricksAndPieces
                 {
                     element.Description = "Element not found";
                 }
+            }
+        }
+
+        private async Task FindProduct(string productId)
+        {
+            if (string.IsNullOrWhiteSpace(productId))
+                return;
+
+            try
+            {
+                Product = null;
+
+                var result = await client.GetStringAsync($"https://www.lego.com/sv-SE/service/rpservice/getproduct?productnumber={productId}&isSalesFlow=true");
+                var resultJson = JsonConvert.DeserializeObject<ResultJson>(result);
+
+                Product = new Element();
+
+                Product.Description = resultJson.Product.ProductName;
+                Product.Image = new BitmapImage(new Uri(resultJson.Product.Asset));
+
+                foreach (var brickJson in resultJson.Bricks)
+                {
+                    Product.Bricks.Add(new Brick
+                    {
+                        DesignId = brickJson.ItemNo,
+                        Description = brickJson.ItemDescr,
+                        Color = brickJson.ColourDescr,
+                        Quantity = new ChangingValue(brickJson.SQty),
+                        Price = new ChangingValue(brickJson.Price),
+                        Image = new BitmapImage(new Uri(resultJson.ImageBaseUrl + brickJson.Asset)),
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                Product = new Element();
+                Product.Description = "Set not found.";
             }
         }
     }
