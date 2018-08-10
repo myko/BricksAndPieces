@@ -37,7 +37,7 @@
                                 <GridViewColumn Header="Element ID/Design ID" Width="130">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBox Text="{Binding ElementId}" />
+                                            <TextBox Text="{Binding ElementId}" KeyUp="TextBox_KeyUp" />
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>

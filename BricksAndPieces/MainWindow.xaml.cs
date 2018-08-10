@@ -49,6 +49,16 @@ namespace BricksAndPieces
 
             base.OnClosing(e);
         }
+
+        private void TextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                (sender as TextBox).GetBindingExpression(TextBox.TextProperty).UpdateSource();
+
+                vm.OnRefresh();
+            }
+        }
     }
 
     public class MainWindowViewModel: ViewModelKit.ViewModelBase
