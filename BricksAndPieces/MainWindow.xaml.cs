@@ -81,6 +81,12 @@ namespace BricksAndPieces
 
         public MainWindowViewModel()
         {
+            if (Properties.Settings.Default.NeedSettingUpgrade)
+            {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.NeedSettingUpgrade = false;
+            }
+
             Elements = new ObservableCollection<Element>();
             foreach (var elementId in Properties.Settings.Default.Elements)
             {
