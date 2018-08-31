@@ -135,8 +135,6 @@ namespace BricksAndPieces
                     var result = await client.GetStringAsync($"https://www.lego.com/sv-SE/service/rpservice/getitemordesign?itemordesignnumber={element.ElementId}&isSalesFlow=true");
                     var product = JsonConvert.DeserializeObject<ResultJson>(result);
 
-                    element.Image = null;
-
                     if (product.Bricks.Count > 0)
                         element.Description = product.Bricks[0].ItemDescr;
 
@@ -145,9 +143,17 @@ namespace BricksAndPieces
                     {
                         element.Bricks.Remove(brick);
                     }
+                                        
+                    element.Image = null;
+
+                    if (product.Bricks.Count == 0)
+                        element.Description = "Element not found";
 
                     foreach (var brickJson in product.Bricks)
                     {
+                        if (element.Image == null)
+                            element.Image = new BitmapImage(new Uri(product.ImageBaseUrl + brickJson.Asset));
+
                         var brick = element.Bricks.SingleOrDefault(b => b.DesignId == brickJson.ItemNo);
                         if (brick == null)
                         {
@@ -158,9 +164,6 @@ namespace BricksAndPieces
                                 Quantity = new ChangingValue(brickJson.SQty),
                                 Price = new ChangingValue(brickJson.Price)
                             });
-
-                            if (element.Image == null)
-                                element.Image = new BitmapImage(new Uri(product.ImageBaseUrl + brickJson.Asset));
                         }
                         else
                         {
@@ -168,12 +171,10 @@ namespace BricksAndPieces
                             brick.Price.Change(brickJson.Price);
                         }
                     }
-
-                    
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    element.Description = "Element not found";
+                    element.Description = "Error: " + ex.Message;
                 }
             }
         }
