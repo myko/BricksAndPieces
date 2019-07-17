@@ -71,6 +71,8 @@ namespace BricksAndPieces
         public string ProductId { get; set; }
         public Element Product { get; set; }
 
+        public string CountryCode { get; set; } = "SE";
+
         public DelegateCommand RefreshCommand { get; }
         public DelegateCommand AddElementCommand { get; }
         public DelegateCommand RemoveElementCommand { get; }
@@ -93,9 +95,10 @@ namespace BricksAndPieces
                 Elements.Add(new Element { ElementId = elementId });
             }
 
+            CountryCode = Properties.Settings.Default.CountryCode;
+
             handler = new HttpClientHandler() { UseCookies = false };
             client = new HttpClient(handler);
-            client.DefaultRequestHeaders.Add("cookie", "csAgeAndCountry={\"age\":\"22\",\"countrycode\":\"SE\"}");
         }
 
         public void OnRefresh()
@@ -131,6 +134,9 @@ namespace BricksAndPieces
 
         private async Task Refresh()
         {
+            client.DefaultRequestHeaders.Remove("cookie");
+            client.DefaultRequestHeaders.Add("cookie", "csAgeAndCountry={\"age\":\"22\",\"countrycode\":\"" + CountryCode + "\"}");
+
             foreach (var element in Elements)
             {
                 if (string.IsNullOrWhiteSpace(element.ElementId))

@@ -42,7 +42,22 @@
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
                                 <GridViewColumn Header="Description" Width="200" DisplayMemberBinding="{Binding Description}" />
-                                <GridViewColumn Header="Bricks" Width="400">
+                                <GridViewColumn Width="400">
+                                    <GridViewColumn.Header>
+                                        <Grid Margin="3,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="150" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Text="Element ID" />
+                                            <TextBlock Grid.Column="1" Text="Color" />
+                                            <TextBlock Grid.Column="2" Text="Quantity" />
+                                            <TextBlock Grid.Column="3" Text="Price" />
+                                        </Grid>
+                                    </GridViewColumn.Header>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <ItemsControl ItemsSource="{Binding Bricks}">
@@ -78,7 +93,11 @@
                         </GridView>
                     </ListView.View>
                 </ListView>
-                <Button Grid.Column="1" Content="Refresh" Command="{Binding RefreshCommand}" />
+                <StackPanel Grid.Column="1" Orientation="Vertical">
+                    <Button Grid.Column="1" Content="Refresh" Command="{Binding RefreshCommand}" />
+                    <Label Content="Country:" />
+                    <TextBox Text="{Binding CountryCode}" />
+                </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
                     <Button Content="Add element" Command="{Binding AddElementCommand}" />
                     <Button Content="Remove element" Command="{Binding RemoveElementCommand}" />

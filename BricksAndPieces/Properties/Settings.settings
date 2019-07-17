@@ -11,5 +11,8 @@
     <Setting Name="NeedSettingUpgrade" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="CountryCode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SE</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
