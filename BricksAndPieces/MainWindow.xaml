@@ -160,5 +160,102 @@
                 </ListView>
             </Grid>
         </TabItem>
+        <TabItem Header="Part finder (Rebrickable)">
+            <Grid Margin="7,7,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Label Content="Category:" />
+                <ComboBox Grid.Column="1" ItemsSource="{Binding Rebrickable.Categories, IsAsync=True}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Rebrickable.CategoryId}" />
+                <Label Grid.Row="1" Content="Color:" />
+                <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Rebrickable.Colors, IsAsync=True}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Rebrickable.ColorId}" />
+                <Label Grid.Row="2" Content="Text search:" />
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Rebrickable.SearchText}" />
+                <Button Grid.Row="2" Grid.Column="2" Content="Search" Command="{Binding Rebrickable.SearchCommand}" />
+                <Button Grid.Row="2" Grid.Column="3" Content="Cancel" Command="{Binding Rebrickable.CancelSearchCommand}" />
+
+                <ListView Grid.Row="3" Grid.ColumnSpan="5" Margin="0,0,7,7" ItemsSource="{Binding Rebrickable.Elements}" ScrollViewer.CanContentScroll="True" VirtualizingPanel.ScrollUnit="Pixel">
+                    <ListView.View>
+                        <GridView>
+                            <GridView.Columns>
+                                <GridViewColumn Width="40">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding Image}" Width="21" Height="21">
+                                                <Image.ToolTip>
+                                                    <Image Source="{Binding Image}" />
+                                                </Image.ToolTip>
+                                            </Image>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Part Number" Width="100" DisplayMemberBinding="{Binding ElementId}" />
+                                <GridViewColumn Header="Description" Width="200" DisplayMemberBinding="{Binding Description}" />
+                                <GridViewColumn Header="From" Width="50" DisplayMemberBinding="{Binding FromYear}" />
+                                <GridViewColumn Header="To" Width="50" DisplayMemberBinding="{Binding ToYear}" />
+                                <GridViewColumn Width="40">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Style="{StaticResource FlatButton}" Content="" Foreground="CornflowerBlue" FontFamily="Segoe UI Symbol" Command="{Binding DataContext.AddSpecificElementCommand, ElementName=mainWindow}" CommandParameter="{Binding ElementId}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="400">
+                                    <GridViewColumn.Header>
+                                        <Grid Margin="3,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="150" />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Text="Element ID" />
+                                            <TextBlock Grid.Column="1" Text="Color" />
+                                            <TextBlock Grid.Column="2" Text="Appears in" />
+                                        </Grid>
+                                    </GridViewColumn.Header>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Button Style="{StaticResource FlatButton}" Content="Find colors..." Command="{Binding DataContext.Rebrickable.FindElementColorsCommand, ElementName=mainWindow}" CommandParameter="{Binding}" Visibility="{Binding HasNoColors, Converter={StaticResource BoolToVisibility}}" />
+
+                                                <ItemsControl ItemsSource="{Binding Bricks}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="100" />
+                                                                    <ColumnDefinition Width="150" />
+                                                                    <ColumnDefinition />
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <Button Style="{StaticResource FlatButton}" Content="{Binding DesignId}" Command="{Binding DataContext.AddSpecificElementCommand, ElementName=mainWindow}" CommandParameter="{Binding DesignId}" />
+                                                                <TextBlock Grid.Column="1" Text="{Binding Color}" />
+                                                                <TextBlock Grid.Column="2" Text="{Binding AppearsIn}" />
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView.Columns>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+        </TabItem>
     </TabControl>
 </Window>

@@ -6,11 +6,25 @@
     <Application.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
 
+        <Style TargetType="Label">
+            <Setter Property="Padding" Value="0,1" />
+            <Setter Property="Margin" Value="0,0,7,7" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Height" Value="21" />
+        </Style>
+        
         <Style TargetType="Button">
             <Setter Property="Padding" Value="10,0" />
             <Setter Property="Margin" Value="0,0,7,7" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Height" Value="21" />
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="0,0,7,7" />
+            <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="Height" Value="21" />
         </Style>
 

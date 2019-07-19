@@ -45,6 +45,7 @@ namespace BricksAndPieces
             {
                 Properties.Settings.Default.Elements.Add(element.ElementId);
             }
+            Properties.Settings.Default.CountryCode = vm.CountryCode;
             Properties.Settings.Default.Save();
 
             base.OnClosing(e);
@@ -81,6 +82,8 @@ namespace BricksAndPieces
 
         public DelegateCommand FindProductCommand { get; }
 
+        public Rebrickable Rebrickable { get; }
+
         public MainWindowViewModel()
         {
             if (Properties.Settings.Default.NeedSettingUpgrade)
@@ -96,6 +99,8 @@ namespace BricksAndPieces
             }
 
             CountryCode = Properties.Settings.Default.CountryCode;
+
+            Rebrickable = new Rebrickable();
 
             handler = new HttpClientHandler() { UseCookies = false };
             client = new HttpClient(handler);
@@ -134,8 +139,7 @@ namespace BricksAndPieces
 
         private async Task Refresh()
         {
-            client.DefaultRequestHeaders.Remove("cookie");
-            client.DefaultRequestHeaders.Add("cookie", "csAgeAndCountry={\"age\":\"22\",\"countrycode\":\"" + CountryCode + "\"}");
+            SetClientHeaders();
 
             foreach (var element in Elements)
             {
@@ -145,7 +149,7 @@ namespace BricksAndPieces
                 try
                 {
                     var result = await client.GetStringAsync($"https://www.lego.com/sv-SE/service/rpservice/getitemordesign?itemordesignnumber={element.ElementId}&isSalesFlow=true");
-                    var product = JsonConvert.DeserializeObject<ResultJson>(result);
+                    var product = JsonConvert.DeserializeObject<BapResultJson>(result);
 
                     if (product.Bricks.Count > 0)
                         element.Description = product.Bricks[0].ItemDescr;
@@ -155,7 +159,7 @@ namespace BricksAndPieces
                     {
                         element.Bricks.Remove(brick);
                     }
-                                        
+
                     element.Image = null;
 
                     if (product.Bricks.Count == 0)
@@ -196,12 +200,14 @@ namespace BricksAndPieces
             if (string.IsNullOrWhiteSpace(productId))
                 return;
 
+            SetClientHeaders();
+
             try
             {
                 Product = null;
 
                 var result = await client.GetStringAsync($"https://www.lego.com/sv-SE/service/rpservice/getproduct?productnumber={productId}&isSalesFlow=true");
-                var resultJson = JsonConvert.DeserializeObject<ResultJson>(result);
+                var resultJson = JsonConvert.DeserializeObject<BapResultJson>(result);
 
                 Product = new Element();
 
@@ -226,6 +232,12 @@ namespace BricksAndPieces
                 Product = new Element();
                 Product.Description = "Set not found.";
             }
+        }
+
+        private void SetClientHeaders()
+        {
+            client.DefaultRequestHeaders.Remove("cookie");
+            client.DefaultRequestHeaders.Add("cookie", "csAgeAndCountry={\"age\":\"22\",\"countrycode\":\"" + CountryCode + "\"}");
         }
     }
 }
