@@ -33,6 +33,8 @@ namespace BricksAndPieces
         {
             InitializeComponent();
 
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
             vm = new MainWindowViewModel();
 
             DataContext = vm;
@@ -148,7 +150,7 @@ namespace BricksAndPieces
 
                 try
                 {
-                    var result = await client.GetStringAsync($"https://www.lego.com/sv-SE/service/rpservice/getitemordesign?itemordesignnumber={element.ElementId}&isSalesFlow=true");
+                    var result = await client.GetStringAsync($"https://www.lego.com/en-GB/service/rpservice/getitemordesign?itemordesignnumber={element.ElementId}&isSalesFlow=true");
                     var product = JsonConvert.DeserializeObject<BapResultJson>(result);
 
                     if (product.Bricks.Count > 0)
@@ -238,6 +240,9 @@ namespace BricksAndPieces
         {
             client.DefaultRequestHeaders.Remove("cookie");
             client.DefaultRequestHeaders.Add("cookie", "csAgeAndCountry={\"age\":\"22\",\"countrycode\":\"" + CountryCode + "\"}");
+
+            client.DefaultRequestHeaders.Remove("upgrade-insecure-requests");
+            client.DefaultRequestHeaders.Add("upgrade-insecure-requests", "1");
         }
     }
 }
