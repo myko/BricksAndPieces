@@ -150,13 +150,13 @@ namespace BricksAndPieces
 
                 try
                 {
-                    var result = await client.GetStringAsync($"https://www.lego.com/en-GB/service/rpservice/getitemordesign?itemordesignnumber={element.ElementId}&isSalesFlow=true");
+                    var result = await client.GetStringAsync($"https://bricksandpieces.services.lego.com/api/v1/bricks/items/{element.ElementId}?country=SE&orderType=buy");
                     var product = JsonConvert.DeserializeObject<BapResultJson>(result);
 
-                    if (product.Bricks.Count > 0)
-                        element.Description = product.Bricks[0].ItemDescr;
+                    if (product.bricks.Count > 0)
+                        element.Description = product.bricks[0].description;
 
-                    var removedBricks = element.Bricks.Where(b => !product.Bricks.Any(pb => pb.ItemNo == b.DesignId)).ToList();
+                    var removedBricks = element.Bricks.Where(b => !product.bricks.Any(pb => pb.itemNumber == b.DesignId)).ToList();
                     foreach (var brick in removedBricks)
                     {
                         element.Bricks.Remove(brick);
@@ -164,29 +164,35 @@ namespace BricksAndPieces
 
                     element.Image = null;
 
-                    if (product.Bricks.Count == 0)
+                    if (product.bricks.Count == 0)
                         element.Description = "Element not found";
 
-                    foreach (var brickJson in product.Bricks)
+                    foreach (var brickJson in product.bricks)
                     {
                         if (element.Image == null)
-                            element.Image = new BitmapImage(new Uri(product.ImageBaseUrl + brickJson.Asset));
+                        {
+                            try
+                            {
+                                element.Image = new BitmapImage(new Uri(brickJson.imageUrl));
+                            }
+                            catch { }
+                        }                            
 
-                        var brick = element.Bricks.SingleOrDefault(b => b.DesignId == brickJson.ItemNo);
+                        var brick = element.Bricks.SingleOrDefault(b => b.DesignId == brickJson.itemNumber);
                         if (brick == null)
                         {
                             element.Bricks.Add(new Brick
                             {
-                                DesignId = brickJson.ItemNo,
-                                Color = brickJson.ColourDescr,
-                                Quantity = new ChangingValue(brickJson.SQty),
-                                Price = new ChangingValue(brickJson.Price)
+                                DesignId = brickJson.itemNumber,
+                                Color = brickJson.colorFamily,
+                                Quantity = new ChangingValue(brickJson.itemQuantity) { IsEnabled = !brickJson.isSoldOut },
+                                Price = new ChangingValue(brickJson.price.amount),
                             });
                         }
                         else
                         {
-                            brick.Quantity.Change(brickJson.SQty);
-                            brick.Price.Change(brickJson.Price);
+                            brick.Quantity.Change(brickJson.itemQuantity);
+                            brick.Price.Change(brickJson.price.amount);
                         }
                     }
                 }
@@ -208,24 +214,24 @@ namespace BricksAndPieces
             {
                 Product = null;
 
-                var result = await client.GetStringAsync($"https://www.lego.com/sv-SE/service/rpservice/getproduct?productnumber={productId}&isSalesFlow=true");
+                var result = await client.GetStringAsync($"https://bricksandpieces.services.lego.com/api/v1/bricks/product/{productId}?country=SE&orderType=buy");
                 var resultJson = JsonConvert.DeserializeObject<BapResultJson>(result);
 
                 Product = new Element();
 
-                Product.Description = resultJson.Product.ProductName;
-                Product.Image = new BitmapImage(new Uri(resultJson.Product.Asset));
+                Product.Description = productId; // resultJson.Product.ProductName;
+                //Product.Image = new BitmapImage(new Uri(resultJson.Product.Asset));
 
-                foreach (var brickJson in resultJson.Bricks)
+                foreach (var brickJson in resultJson.bricks)
                 {
                     Product.Bricks.Add(new Brick
                     {
-                        DesignId = brickJson.ItemNo,
-                        Description = brickJson.ItemDescr,
-                        Color = brickJson.ColourDescr,
-                        Quantity = new ChangingValue(brickJson.SQty),
-                        Price = new ChangingValue(brickJson.Price),
-                        Image = new BitmapImage(new Uri(resultJson.ImageBaseUrl + brickJson.Asset)),
+                        DesignId = brickJson.itemNumber,
+                        Description = brickJson.description,
+                        Color = brickJson.colorFamily,
+                        Quantity = new ChangingValue(brickJson.itemQuantity) { IsEnabled = !brickJson.isSoldOut },
+                        Price = new ChangingValue(brickJson.price.amount),
+                        Image = new BitmapImage(new Uri(brickJson.imageUrl)),
                     });
                 }
             }
@@ -240,6 +246,9 @@ namespace BricksAndPieces
         {
             client.DefaultRequestHeaders.Remove("cookie");
             client.DefaultRequestHeaders.Add("cookie", "csAgeAndCountry={\"age\":\"22\",\"countrycode\":\"" + CountryCode + "\"}");
+
+            client.DefaultRequestHeaders.Remove("x-api-key");
+            client.DefaultRequestHeaders.Add("x-api-key", "saVSCq0hpuxYV48mrXMGfdKnMY1oUs3s");
 
             client.DefaultRequestHeaders.Remove("upgrade-insecure-requests");
             client.DefaultRequestHeaders.Add("upgrade-insecure-requests", "1");

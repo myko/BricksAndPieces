@@ -5,7 +5,7 @@ namespace BricksAndPieces
     public class BapResultJson
     {
         public BapProductJson Product { get; set; }
-        public List<BapBrickJson> Bricks { get; set; } = new List<BapBrickJson>();
+        public List<BapBrickJson> bricks { get; set; } = new List<BapBrickJson>();
         public string ImageBaseUrl { get; set; }
     }
     
@@ -17,13 +17,20 @@ namespace BricksAndPieces
 
     public class BapBrickJson
     {
-        public int ItemNo { get; set; }
-        public string ItemDescr { get; set; }
-        public double SQty { get; set; }
-        public string ColourDescr { get; set; }
-        public string Asset { get; set; }
-        public double Price { get; set; }
+        public int itemNumber { get; set; }
+        public string description { get; set; }
+        public double itemQuantity { get; set; }
+        public string colorFamily { get; set; }
+        public string imageUrl { get; set; }
+        public bool isSoldOut { get; set; }
+        public BapBrickPriceJson price { get; set; }
         public string PriceWithTaxStr { get; set; }
+    }
+
+    public class BapBrickPriceJson
+    {
+        public double amount { get; set; }
+        public string currency { get; set; }
     }
 
     public class RebrickableResultJson<T>

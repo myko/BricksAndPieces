@@ -72,7 +72,7 @@
 
         <DataTemplate DataType="{x:Type local:ChangingValue}">
             <StackPanel Grid.Column="2" Orientation="Horizontal">
-                <TextBlock Text="{Binding Value}">
+                <TextBlock Text="{Binding Value}" Visibility="{Binding IsEnabled, Converter={StaticResource BoolToVisibility}}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Foreground" Value="Black" />
@@ -94,6 +94,7 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
+                <TextBlock Text="Out of stock" Visibility="{Binding IsDisabled, Converter={StaticResource BoolToVisibility}}" />
                 <TextBlock Text="⭜" Visibility="{Binding HasIncreased, Converter={StaticResource BoolToVisibility}}" Foreground="DarkGreen" FontWeight="Bold" />
                 <TextBlock Text="⭝" Visibility="{Binding HasDecreased, Converter={StaticResource BoolToVisibility}}" Foreground="DarkRed" FontWeight="Bold" />
             </StackPanel>
